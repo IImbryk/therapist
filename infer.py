@@ -10,7 +10,6 @@ from pyannote.audio.pipelines import SpeakerDiarization
 import torch
 
 
-
 custom_model = False  # Tune
 read_hyperparameters = True  # Tune
 add_split_on_chunks = True  # Tune
@@ -27,7 +26,6 @@ print('Current_dir', path)
 check_files_name(input_path)
 wav_list = list(Path(input_path).glob('*.wav*'))
 
-HYPER_PARAMETERS = {}
 
 pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token="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")
 hparams = pipeline.parameters(instantiated=True)
