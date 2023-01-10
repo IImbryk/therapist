@@ -47,29 +47,30 @@ def save_annotation(annotation, rttm_path):
         annotation.write_rttm(fout)
     return print(f'Save {rttm_path}')
 
-#_split
+
+# _split
 def audio_split(diarization_path, fname):
     fs_wav, audio = wavfile.read(f'{fname}.wav')
 
     with open(diarization_path, 'r') as fout_csv:
-      for i, line in enumerate(fout_csv):
-        line = line.strip().split(' ')
-        if float(line[4])>1:
-          start_time = float(line[3])*fs_wav
-          finish_time = start_time + float(line[4])*fs_wav
+        for i, line in enumerate(fout_csv):
+            line = line.strip().split(' ')
+            if float(line[4]) > 1:
+                start_time = float(line[3]) * fs_wav
+                finish_time = start_time + float(line[4]) * fs_wav
 
-          # print(start_time,"_", finish_time)
-          chunk = audio[int(start_time):int(finish_time)]
-          name = line[7]
-          if not os.path.exists(f'{fname}_split/{name}/'):
-              os.makedirs(f'{fname}_split/{name}/')
-          chunk_name = f'{fname}_split/{name}/{name}_{i}.wav'
+                # print(start_time,"_", finish_time)
+                chunk = audio[int(start_time):int(finish_time)]
+                name = line[7]
+                if not os.path.exists(f'{fname}_split/{name}/'):
+                    os.makedirs(f'{fname}_split/{name}/')
+                chunk_name = f'{fname}_split/{name}/{name}_{i}.wav'
 
-          wavfile.write(chunk_name, fs_wav, chunk)
+                wavfile.write(chunk_name, fs_wav, chunk)
 
 
 def eval_overlapped(gt_rttm_path, res_rttm_path, len_audio, file=False):
-      """
+    """
         input (str):
                 the path of rttm file groundtruth,
                 the path of rttm file result from model
@@ -80,60 +81,59 @@ def eval_overlapped(gt_rttm_path, res_rttm_path, len_audio, file=False):
 
         The function reads annotation from rttm and prints metrics.
       """
-      # print('Overlap evaluation: ')
+    # print('Overlap evaluation: ')
 
-      gt = load_rttm(gt_rttm_path)
-      key_name = list(gt.keys())[0]
-      gt = gt[key_name]
+    gt = load_rttm(gt_rttm_path)
+    key_name = list(gt.keys())[0]
+    gt = gt[key_name]
 
-      # res = load_rttm(res_rttm_path)['<NA>']
-      res = load_rttm(res_rttm_path)
-      key_name = list(res.keys())[0]
-      res = res[key_name]
+    # res = load_rttm(res_rttm_path)['<NA>']
+    res = load_rttm(res_rttm_path)
+    key_name = list(res.keys())[0]
+    res = res[key_name]
 
-      from pyannote.metrics.detection import DetectionPrecision, DetectionRecall, DetectionAccuracy
-      DetectionPrecision = DetectionPrecision(collar=0.05)
-      DetectionRecall = DetectionRecall(collar=0.05)
-      DetectionAccuracy = DetectionAccuracy(collar=0.05)
+    from pyannote.metrics.detection import DetectionPrecision, DetectionRecall, DetectionAccuracy
+    DetectionPrecision = DetectionPrecision(collar=0.05)
+    DetectionRecall = DetectionRecall(collar=0.05)
+    DetectionAccuracy = DetectionAccuracy(collar=0.05)
 
+    metric = DetectionPrecision(gt, res, detailed=True)
+    # print('Precision: ', metric['detection precision'])
+    dp = metric['detection precision']
+    metric = DetectionRecall(gt, res, detailed=True)
+    # print('Recall: ', metric['detection recall'])
+    dr = metric['detection recall']
 
-      metric = DetectionPrecision(gt, res, detailed=True)
-      # print('Precision: ', metric['detection precision'])
-      dp = metric['detection precision']
-      metric = DetectionRecall(gt, res, detailed=True)
-      # print('Recall: ', metric['detection recall'])
-      dr = metric['detection recall']
+    # print('sum', dp + dr)
+    # print(metric)
+    # print('duration_overlap_res', res.get_timeline().duration())
+    # print('len_audio', len_audio)
 
-      # print('sum', dp + dr)
-      # print(metric)
-      # print('duration_overlap_res', res.get_timeline().duration())
-      # print('len_audio', len_audio)
+    # print(f'percentage of overlapping talks (result): {100*res.get_timeline().duration()/len_audio:.2f}%' )
 
-      # print(f'percentage of overlapping talks (result): {100*res.get_timeline().duration()/len_audio:.2f}%' )
+    # print('duration_overlap_gt', gt.get_timeline().duration())
+    # print(f'percentage of overlapping talks (gt): {100*gt.get_timeline().duration()/len_audio:.2f}%' )
 
-      # print('duration_overlap_gt', gt.get_timeline().duration())
-      # print(f'percentage of overlapping talks (gt): {100*gt.get_timeline().duration()/len_audio:.2f}%' )
+    metric = DetectionAccuracy(gt, res)
+    # print('Accuracy: ', metric)
 
-      metric = DetectionAccuracy(gt, res)
-      # print('Accuracy: ', metric)
+    # if we want to write metrics to file
+    if file:
+        file.write('Overlap \n')
+        metric = DetectionPrecision(gt, res, detailed=True)
+        file.write(f'Precision: {metric["detection precision"]}\n')
+        metric = DetectionRecall(gt, res, detailed=True)
+        file.write(f'Recall: {metric["detection recall"]}\n')
 
+        file.write(
+            f'percentage of overlapping talks (result): {100 * res.get_timeline().duration() / len_audio:.2f}% \n')
+        file.write(f'percentage of overlapping talks (gt): {100 * gt.get_timeline().duration() / len_audio:.2f}% \n')
 
-      # if we want to write metrics to file
-      if file:
-          file.write('Overlap \n')
-          metric = DetectionPrecision(gt, res, detailed=True)
-          file.write(f'Precision: {metric["detection precision"]}\n')
-          metric = DetectionRecall(gt, res, detailed=True)
-          file.write(f'Recall: {metric["detection recall"]}\n')
+        metric = DetectionAccuracy(gt, res)
+        file.write(f'Accuracy {metric}\n')
 
-          file.write(f'percentage of overlapping talks (result): {100*res.get_timeline().duration()/len_audio:.2f}% \n')
-          file.write(f'percentage of overlapping talks (gt): {100*gt.get_timeline().duration()/len_audio:.2f}% \n')
-
-          metric = DetectionAccuracy(gt, res)
-          file.write(f'Accuracy {metric}\n')
-
-      # print('____________________________')
-      return res, gt
+    # print('____________________________')
+    return res, gt
 
 
 def eval_diarization(gt_rttm_path, res_rttm_path, file=False):
@@ -172,18 +172,16 @@ def eval_diarization(gt_rttm_path, res_rttm_path, file=False):
     der = metric(gt, res)
     # print(f'diarization error rate: {100 * der:.1f}%')
 
-
     if file:
-          file.write('Diarization \n')
-          metric = DetectionPrecision(gt, res, detailed=True)
-          file.write(f'Precision: {metric["detection precision"]}\n')
-          metric = DetectionRecall(gt, res, detailed=True)
-          file.write(f'Recall: {metric["detection recall"]}\n')
+        file.write('Diarization \n')
+        metric = DetectionPrecision(gt, res, detailed=True)
+        file.write(f'Precision: {metric["detection precision"]}\n')
+        metric = DetectionRecall(gt, res, detailed=True)
+        file.write(f'Recall: {metric["detection recall"]}\n')
 
-
-          metric = DiarizationErrorRate()
-          der = metric(gt, res)
-          file.write(f'Diarization Error Rate: {100 * der:.1f}% \n')
+        metric = DiarizationErrorRate()
+        der = metric(gt, res)
+        file.write(f'Diarization Error Rate: {100 * der:.1f}% \n')
 
     # print('____________________________')
     return res, gt
@@ -217,7 +215,6 @@ def save_fig(groundtruth, diarization, overlap, start, end, results_dir, fname, 
 
 
 def csv_to_rttm(data_file, out_file):
-
     periods = []
     speaker1_in_process = False
     speaker2_in_process = False
@@ -388,8 +385,8 @@ def get_overlap_annotation(res):
 
 
 def change_sampling_rate(path_file, path_file_out):
-    sampling_rate, data = read_wav(path_file) # enter your filename
-    print("Sampling rate before changing",sampling_rate)
+    sampling_rate, data = read_wav(path_file)  # enter your filename
+    print("Sampling rate before changing", sampling_rate)
     sound = AudioSegment.from_file(path_file, format='wav', frame_rate=44100)
     sound = sound.set_frame_rate(16000)
     sound.export(path_file_out, format='wav')
@@ -417,14 +414,17 @@ def get_params_from_yml(file_path, params_name):
     return params_result
 
 
-def replace_param(path_params_main, path_params_new_SAD,path_params_new_SCD):
+def replace_param(path_params_main, path_params_new_SAD, path_params_new_SCD):
     params_main = read_yml(path_params_main)
     params_new_SAD = read_yml(path_params_new_SAD)
     params_new_SCD = read_yml(path_params_new_SCD)
 
-    params_main['params']['speech_turn_segmentation']['speech_activity_detection']['offset'] = params_new_SAD['params']['offset']
-    params_main['params']['speech_turn_segmentation']['speech_activity_detection']['onset'] = params_new_SAD['params']['onset']
-    params_main['params']['speech_turn_segmentation']['speaker_change_detection']['alpha'] = params_new_SCD['params']['alpha']
+    params_main['params']['speech_turn_segmentation']['speech_activity_detection']['offset'] = params_new_SAD['params'][
+        'offset']
+    params_main['params']['speech_turn_segmentation']['speech_activity_detection']['onset'] = params_new_SAD['params'][
+        'onset']
+    params_main['params']['speech_turn_segmentation']['speaker_change_detection']['alpha'] = params_new_SCD['params'][
+        'alpha']
 
     write_yml(path_params_main, params_main)
 
@@ -440,12 +440,12 @@ def train_model(root_path, pretrained, Application, count_epochs):
 
     warm_start = Path(pretrained)
     pretrained_config_yml = warm_start.parents[3] / "config.yml"
-    pretrained_config_yml  = Path(pretrained_config_yml)
+    pretrained_config_yml = Path(pretrained_config_yml)
     print(pretrained_config_yml)
 
     params["warm_start"] = warm_start
 
-    params["epochs"] = count_epochs #int(arg["--to"])
+    params["epochs"] = count_epochs  # int(arg["--to"])
 
     root_dir = Path(root_path).expanduser().resolve(strict=True)
     app = Application(root_dir, training=True, pretrained_config_yml=pretrained_config_yml)
@@ -479,7 +479,8 @@ def train_validate_model(Application, new_model_dir_path, base_model_path, count
     os.makedirs(new_model_dir_path, exist_ok=True)
     # print("!!",base_model_path)
     train_model(new_model_dir_path, base_model_path, Application, count_epochs)
-    validation_model(f'{new_model_dir_path}/train/OWN.SpeakerDiarization.MixHeadset.train', Application, start, end, every)
+    validation_model(f'{new_model_dir_path}/train/OWN.SpeakerDiarization.MixHeadset.train', Application, start, end,
+                     every)
 
 
 def check_files_name(path):
@@ -509,6 +510,7 @@ def test(model, protocol, subset="test"):
 
     return abs(metric)
 
+
 # def test(model, protocol, subset="test"):
 #     from pyannote.audio.utils.signal import binarize
 #     from pyannote.audio.utils.metric import DiscreteDiarizationErrorRate
@@ -534,4 +536,101 @@ def test(model, protocol, subset="test"):
 #
 #     return abs(metric)
 
+# _split
+# def audio_split(diarization_path, fname):
+#     fs_wav, audio = wavfile.read(f'{fname}.wav')
+#
+#     with open(diarization_path, 'r') as fout_csv:
+#         for i, line in enumerate(fout_csv):
+#             line = line.strip().split(' ')
+#             if float(line[4]) > 1:
+#                 start_time = float(line[3]) * fs_wav
+#                 finish_time = start_time + float(line[4]) * fs_wav
+#
+#                 # print(start_time,"_", finish_time)
+#                 chunk = audio[int(start_time): int(finish_time)]
+#                 name = line[7]
+#                 if not os.path.exists(f'{fname}_split/{name}/'):
+#                     os.makedirs(f'{fname}_split/{name}/')
+#                 chunk_name = f'{fname}_split/{name}/{name}_{i}.wav'
+#
+#                 wavfile.write(chunk_name, fs_wav, chunk)
 
+
+def get_chunks(diarization_path, fname):
+    fs_wav, audio = wavfile.read(f'{fname}.wav')
+    with open(diarization_path, 'r') as fout_csv:
+        chunks = []
+        for i, line in enumerate(fout_csv):
+            line = line.strip().split(' ')
+            if float(line[4]) > 1:
+                start_time = float(line[3]) * fs_wav
+                finish_time = start_time + float(line[4]) * fs_wav
+                # chunk = audio[int(start_time): int(finish_time)]
+                name = line[7]
+                chunks.append((start_time, finish_time, name))
+    return chunks
+
+
+def merge_chunk(chunks):
+    cnt = 0
+    chunks_result = []
+    for start_time, finish_time, name in chunks:
+        if cnt == 0:
+            start = start_time
+            end = finish_time
+            prev_speaker = name
+        else:
+            if prev_speaker != name:
+                chunks_result.append((start, end, prev_speaker))
+                start = start_time
+                end = finish_time
+                prev_speaker = name
+            else:
+                end = finish_time
+        cnt += 1
+    chunks_result.append((start, end, prev_speaker))
+    return chunks_result
+
+
+
+# def merge_chunk(diarization_path, fname):
+#     fs_wav, audio = wavfile.read(f'{fname}.wav')
+#
+#     with open(diarization_path, 'r') as fout_csv:
+#         cnt = 0
+#         chunks = []
+#         for i, line in enumerate(fout_csv):
+#             line = line.strip().split(' ')
+#             if float(line[4]) > 1:
+#                 if cnt == 0:
+#                     start = float(line[3]) * fs_wav
+#                     end = start + float(line[4]) * fs_wav
+#                     prev_speaker = line[7]
+#                 else:
+#                     if prev_speaker != line[7]:
+#                         chunks.append((start, end, prev_speaker))
+#                         start = float(line[3]) * fs_wav
+#                         end = start + float(line[4]) * fs_wav
+#                         prev_speaker = line[7]
+#                     else:
+#                         end = start + float(line[4]) * fs_wav
+#                 cnt += 1
+#         chunks.append((start, end, prev_speaker))
+#     print(len(chunks))
+#     return chunks
+
+
+def save_audio(chanks, fname):
+    fs_wav, audio = wavfile.read(f'{fname}.wav')
+
+
+    for i, col in enumerate(chanks):
+        print(i, col)
+        start_time, finish_time, name = col[0], col[1], col[2]
+        chunk = audio[int(start_time): int(finish_time)]
+        if not os.path.exists(f'{fname}_split/{name}/'):
+            os.makedirs(f'{fname}_split/{name}/')
+        chunk_name = f'{fname}_split/{name}/{name}_{i}.wav'
+
+        wavfile.write(chunk_name, fs_wav, chunk)

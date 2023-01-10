@@ -1,6 +1,6 @@
 from pyannote.database.util import load_rttm
 from pathlib import Path
-from utils import save_fig, chunks, save_annotation, csv_to_rttm, get_duration, eval_overlapped, eval_diarization, check_files_name, get_overlap_reference, test
+from utils import *
 from pyannote.audio import Pipeline
 from tqdm import tqdm
 import os
@@ -120,4 +120,10 @@ for wav_file in wav_list:
     for start, stop in tqdm(chunks(get_duration(str(wav_file)), plot_duration)):
         save_fig(groundtruth, diarization, overlap, start, stop, figure_path, fname)
 
+
+
 file_metrics.close()
+
+chunks = get_chunks('output/SHAHAF_AVIGAIL_AUDIO_diarization.rttm', 'data_test/SHAHAF_AVIGAIL_AUDIO')
+# chunks = merge_chunk(chunks)
+save_audio(chunks,  'data_test/SHAHAF_AVIGAIL_AUDIO')
