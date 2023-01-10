@@ -557,8 +557,7 @@ def test(model, protocol, subset="test"):
 #                 wavfile.write(chunk_name, fs_wav, chunk)
 
 
-def get_chunks(diarization_path, fname):
-    fs_wav, audio = wavfile.read(f'{fname}.wav')
+def get_chunks(diarization_path, fs_wav):
     with open(diarization_path, 'r') as fout_csv:
         chunks = []
         for i, line in enumerate(fout_csv):
@@ -621,16 +620,15 @@ def merge_chunk(chunks):
 #     return chunks
 
 
-def save_audio(chanks, fname):
-    fs_wav, audio = wavfile.read(f'{fname}.wav')
-
+def save_audio(chanks, fname, fs_wav, audio):
+    # fs_wav, audio = wavfile.read(f'data_test/{fname}.wav')
 
     for i, col in enumerate(chanks):
         print(i, col)
         start_time, finish_time, name = col[0], col[1], col[2]
         chunk = audio[int(start_time): int(finish_time)]
-        if not os.path.exists(f'{fname}_split/{name}/'):
-            os.makedirs(f'{fname}_split/{name}/')
-        chunk_name = f'{fname}_split/{name}/{name}_{i}.wav'
+        if not os.path.exists(f'output/{fname}_split/{name}/'):
+            os.makedirs(f'output/{fname}_split/{name}/')
+        chunk_name = f'output/{fname}_split/{name}/{name}_{i}.wav'
 
         wavfile.write(chunk_name, fs_wav, chunk)
