@@ -120,6 +120,7 @@ for wav_file in wav_list:
     plot_duration = 30
     for start, stop in tqdm(chunks(get_duration(str(wav_file)), plot_duration)):
         save_fig(groundtruth, diarization, overlap, start, stop, figure_path, fname)
+
     fs_wav, audio = wavfile.read(f'data_test/{fname}.wav')
     chunks = get_chunks('output/SHAHAF_AVIGAIL_AUDIO_diarization.rttm', fs_wav)
     if add_split_on_chunks:

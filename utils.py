@@ -511,52 +511,6 @@ def test(model, protocol, subset="test"):
     return abs(metric)
 
 
-# def test(model, protocol, subset="test"):
-#     from pyannote.audio.utils.signal import binarize
-#     from pyannote.audio.utils.metric import DiscreteDiarizationErrorRate
-#     from pyannote.metrics.detection import DetectionPrecision, DetectionRecall
-#     from pyannote.audio.pipelines.utils import get_devices
-#
-#     (device,) = get_devices(needs=1)
-#     metric = DiscreteDiarizationErrorRate()
-#     metric1 = DetectionPrecision()
-#     metric2 = DetectionRecall()
-#     files = list(getattr(protocol, subset)())
-#
-#     inference = Inference(model, device=device)
-#
-#     for file in files:
-#         reference = file["annotation"]
-#         hypothesis = binarize(inference(file))
-#         uem = file["annotated"]
-#         _ = metric(reference, hypothesis, uem=uem)
-#         _ = metric1(reference, hypothesis, uem=uem)
-#
-#         _ = metric2(reference, hypothesis, uem=uem)
-#
-#     return abs(metric)
-
-# _split
-# def audio_split(diarization_path, fname):
-#     fs_wav, audio = wavfile.read(f'{fname}.wav')
-#
-#     with open(diarization_path, 'r') as fout_csv:
-#         for i, line in enumerate(fout_csv):
-#             line = line.strip().split(' ')
-#             if float(line[4]) > 1:
-#                 start_time = float(line[3]) * fs_wav
-#                 finish_time = start_time + float(line[4]) * fs_wav
-#
-#                 # print(start_time,"_", finish_time)
-#                 chunk = audio[int(start_time): int(finish_time)]
-#                 name = line[7]
-#                 if not os.path.exists(f'{fname}_split/{name}/'):
-#                     os.makedirs(f'{fname}_split/{name}/')
-#                 chunk_name = f'{fname}_split/{name}/{name}_{i}.wav'
-#
-#                 wavfile.write(chunk_name, fs_wav, chunk)
-
-
 def get_chunks(diarization_path, fs_wav):
     with open(diarization_path, 'r') as fout_csv:
         chunks = []
@@ -592,37 +546,7 @@ def merge_chunk(chunks):
     return chunks_result
 
 
-
-# def merge_chunk(diarization_path, fname):
-#     fs_wav, audio = wavfile.read(f'{fname}.wav')
-#
-#     with open(diarization_path, 'r') as fout_csv:
-#         cnt = 0
-#         chunks = []
-#         for i, line in enumerate(fout_csv):
-#             line = line.strip().split(' ')
-#             if float(line[4]) > 1:
-#                 if cnt == 0:
-#                     start = float(line[3]) * fs_wav
-#                     end = start + float(line[4]) * fs_wav
-#                     prev_speaker = line[7]
-#                 else:
-#                     if prev_speaker != line[7]:
-#                         chunks.append((start, end, prev_speaker))
-#                         start = float(line[3]) * fs_wav
-#                         end = start + float(line[4]) * fs_wav
-#                         prev_speaker = line[7]
-#                     else:
-#                         end = start + float(line[4]) * fs_wav
-#                 cnt += 1
-#         chunks.append((start, end, prev_speaker))
-#     print(len(chunks))
-#     return chunks
-
-
 def save_audio(chanks, fname, fs_wav, audio):
-    # fs_wav, audio = wavfile.read(f'data_test/{fname}.wav')
-
     for i, col in enumerate(chanks):
         print(i, col)
         start_time, finish_time, name = col[0], col[1], col[2]
