@@ -1,0 +1,16 @@
+Databases:
+   MyDatabase: data_train/{uri}.wav
+Protocols:
+  MyDatabase:
+    Protocol:
+      MyProtocol:
+        train:
+            uri: train.lst
+            speaker: train.rttm
+            annotation: train.rttm
+            annotated: train.uem
+        test:
+          uri: test.lst
+          speaker: test.rttm
+          annotation: test.rttm
+          annotated: test.uem
