@@ -13,7 +13,7 @@ parser = argparse.ArgumentParser(description='therapist diarizetion')
 parser.add_argument('--trained_model', action='store_true')
 parser.add_argument('--read_hyperparameters', action='store_true')
 parser.add_argument('--no_merge', action='store_true')
-parser.add_argument('--input_path', default='data', type=str)
+parser.add_argument('--input_path', default='data/', type=str)
 
 
 args = parser.parse_args()

@@ -16,7 +16,7 @@ Set max_epochs in code for count epoch optimization
 * `infer.py` - model using. The result writes in \output
 (Set custom_model and read_hyperparameters if you want to use custom's models and new hyperparameters)
 
-* `tune_hyperparameters.py` - the pipeline hyper-parameters optimizing -- segmentation.threshold and clustering.threshold 
+* `tune_hyperparameters.py` - the pipeline hyper-parameters optimizing -- segmentation.threshold and clustering.threshold
 (Set iter_count for count epoch optimization)
 
 
@@ -27,7 +27,7 @@ directoires:
 * `data_test` - .wav and .csv for models testing
 * `output` - results
 
-	
+
 
 ## Installation
 1) Install Python 3.8+ (though it might work with Python 3.7)
@@ -61,8 +61,8 @@ You can use the same token on different PC.
 
 
 ## Start
-To run this training type in terminal:
+To run inference type in terminal:
 
 ```
-$ python train.py
+$ python infer.py --trained_model --read_hyperparameters --no_merge --input_path <DATA_PATH>
 ```
