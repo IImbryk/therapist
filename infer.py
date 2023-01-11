@@ -23,7 +23,7 @@ hparams = pipeline.parameters(instantiated=True)
 
 # Load model for diarization
 if custom_model:
-    finetuned_model = torch.load('models/models_segmentation.pt')
+    finetuned_model = torch.load('models/models_segmentation.pt', map_location=device)
 
     pipeline = SpeakerDiarization(
         segmentation=finetuned_model,
