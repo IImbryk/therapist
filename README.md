@@ -3,6 +3,7 @@
 
 ## Table of contents
 * [Structure](#Structure)
+* [Installation](#Installation)
 * [Start](#Start)
 
 ## Structure
@@ -27,19 +28,41 @@ directoires:
 * `output` - results
 
 	
+
+## Installation
+1) Install Python 3.8+ (though it might work with Python 3.7)
+
+2) Install libraries. There's two ways installation liberies:
+* use `requirements.txt`:
+
+Download code, [open terminal](https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/) in \therapist directory and type:
+```
+pip install -r requirements.txt
+```
+* manually:
+```
+pip install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0
+pip install pyannote.audio
+pip install huggingface_hub
+```
+Primarily requirements are driven by the [pyannote](https://github.com/pyannote/pyannote-audio) library.
+
+
+### Authorization
+
+Official pyannote.audio pipelines are open-source, but gated. It means that you have to first accept users conditions on their respective Huggingface page to access the pretrained weights and hyper-parameters.
+1. Register on [HuggingFace](https://huggingface.co)
+2. Visit [speaker-diarization page](https://huggingface.co/pyannote/speaker-diarization) and accept the terms
+3. Visit [segmentation page](https://huggingface.co/pyannote/segmentation) and accept the terms
+4. Go to [Seetings (User Access Tokens)](https://huggingface.co/settings/tokens), generate token and copy it
+5. Insert token in `token.txt` file
+
+You can use the same token on different PC.
+
+
 ## Start
 To run this training type in terminal:
 
 ```
-$ python3 train.py
-```
-
-
-1. Register on https://huggingface.co
-2. Sign the User Agreements https://huggingface.co/pyannote/speaker-diarization
-3. Go to https://huggingface.co/settings/tokens (User Access Tokens) and generate token and copy it
-
-save token for linux:
-```
-python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('MY_HUGGINGFACE_TOKEN_HERE')"
+$ python train.py
 ```

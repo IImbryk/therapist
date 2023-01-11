@@ -22,8 +22,6 @@ torch.cuda.empty_cache()
 check_files_name(input_path)
 wav_list = list(Path(input_path).glob('*.wav*'))
 
-
-# pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token="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")
 pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token=True)
 hparams = pipeline.parameters(instantiated=True)
 
@@ -49,7 +47,7 @@ if os.path.exists('hyperparameters/config.yaml') and read_hyperparameters == Tru
 # model loading for for overlap!!!!
 overlapped_hyperparameters = {"onset": 0.5, "offset": 0.5, "min_duration_on": 0.1, "min_duration_off": 0.1}
 
-model = Model.from_pretrained("pyannote/segmentation", use_auth_token='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')
+model = Model.from_pretrained("pyannote/segmentation", use_auth_token=True)
 overlapp_model = OverlappedSpeechDetection(segmentation=model)
 overlapp_model.instantiate(overlapped_hyperparameters)
 
