@@ -22,9 +22,8 @@ rttm_file = 'train.rttm'
 uem_file = 'train.uem'
 lst_file = 'train.lst'
 
-
+# data preparation
 create_train_list(rttm_file, uem_file, lst_file, data_files)
-
 
 
 protocol = get_protocol('MyDatabase.Protocol.MyProtocol', preprocessors={"audio": FileFinder()})
@@ -34,8 +33,8 @@ for resource in protocol.train():
 
 pretrained = Model.from_pretrained("pyannote/segmentation", use_auth_token='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')
 
-# seg_task = Segmentation(protocol, duration=1, max_num_speakers=2)
-seg_task = OverlappedSpeechDetection(protocol,  duration=1., batch_size=16)
+seg_task = Segmentation(protocol, duration=1, max_num_speakers=2)
+
 
 finetuned = deepcopy(pretrained)
 finetuned.task = seg_task
@@ -54,6 +53,10 @@ print(f"Local DER (finetuned) = {der_finetuned * 100:.1f}%")
 
 
 # save model
-torch.save(finetuned, 'models/models.pt')
+torch.save(finetuned, 'models/models_segmentation.pt')
 
 
+# osd_task = OverlappedSpeechDetection(protocol,  duration=1., batch_size=16)
+#
+# from pyannote.audio.models.segmentation.debug import SimpleSegmentationModel
+# model = SimpleSegmentationModel(task=osd_task)
