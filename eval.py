@@ -117,7 +117,7 @@ for wav_file in wav_list:
         save_fig(groundtruth, diarization, overlap, start, stop, figure_path, fname)
 
     # save audio
-    fs_wav, audio = wavfile.read(f'data_test/{fname}.wav')
+    fs_wav, audio = wavfile.read(f'{args.input_path}{fname}.wav')
     chunks = get_chunks(f'output/{fname}_diarization.rttm', fs_wav)
     if not args.no_merge:
         chunks = merge_chunk(chunks)
