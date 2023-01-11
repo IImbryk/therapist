@@ -548,7 +548,6 @@ def merge_chunk(chunks):
 
 def save_audio(chanks, fname, fs_wav, audio):
     for i, col in enumerate(chanks):
-        print(i, col)
         start_time, finish_time, name = col[0], col[1], col[2]
         chunk = audio[int(start_time): int(finish_time)]
         if not os.path.exists(f'output/{fname}_split/{name}/'):
