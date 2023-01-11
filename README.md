@@ -35,3 +35,11 @@ $ python3 train.py
 ```
 
 
+1. Register on https://huggingface
+2. Sign the User Agreements https://huggingface.co/pyannote/speaker-diarization
+3. Go to https://huggingface.co/settings/tokens (User Access Tokens) and generate token and copy it
+
+save token for linux:
+```
+python -c "from huggingface_hub.hf_api import HfFolder; HfFolder.save_token('MY_HUGGINGFACE_TOKEN_HERE')"
+```
