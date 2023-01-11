@@ -35,7 +35,7 @@ directoires:
 2) Install libraries. There's two ways installation liberies:
 * use `requirements.txt`:
 
-Download code, [open terminal](https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/) in \therapist directory and type:
+Download code, [open terminal](https://www.groovypost.com/howto/open-command-window-terminal-window-specific-folder-windows-mac-linux/) in `\therapist` directory and type:
 ```
 pip install -r requirements.txt
 ```
@@ -50,7 +50,7 @@ Primarily requirements are driven by the [pyannote](https://github.com/pyannote/
 
 ### Authorization
 
-Official pyannote.audio pipelines are open-source, but gated. It means that you have to first accept users conditions on their respective Huggingface page to access the pretrained weights and hyper-parameters.
+Official [pyannote.audio](https://github.com/pyannote/pyannote-audio) pipelines are open-source, but gated. It means that you have to first accept users conditions on their respective Huggingface page to access the pretrained weights and hyper-parameters.
 1. Register on [HuggingFace](https://huggingface.co)
 2. Visit [speaker-diarization page](https://huggingface.co/pyannote/speaker-diarization) and accept the terms
 3. Visit [segmentation page](https://huggingface.co/pyannote/segmentation) and accept the terms
