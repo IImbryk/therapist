@@ -22,13 +22,14 @@ torch.cuda.empty_cache()
 check_files_name(input_path)
 wav_list = list(Path(input_path).glob('*.wav*'))
 
+
 # pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token="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")
 pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1", use_auth_token=True)
 hparams = pipeline.parameters(instantiated=True)
 
 # Load model for diarization
 if custom_model:
-    finetuned_model = torch.load('models/models_segmentation.pt')
+    finetuned_model = torch.load('models/models_segmentation.pt', map_location=device)
 
     pipeline = SpeakerDiarization(
         segmentation=finetuned_model,

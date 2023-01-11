@@ -35,7 +35,7 @@ $ python3 train.py
 ```
 
 
-1. Register on https://huggingface
+1. Register on https://huggingface.co
 2. Sign the User Agreements https://huggingface.co/pyannote/speaker-diarization
 3. Go to https://huggingface.co/settings/tokens (User Access Tokens) and generate token and copy it
 
