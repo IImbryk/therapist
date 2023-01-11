@@ -6,8 +6,9 @@ from scipy.io import wavfile
 from pyannote.audio import Pipeline
 from pyannote.audio.pipelines import SpeakerDiarization
 from utils import check_files_name, save_annotation, get_chunks, merge_chunk, save_audio
+from therapist_verification import SpeakerVerification
 
-
+verification = SpeakerVerification()
 parser = argparse.ArgumentParser(description='therapist diarizetion')
 
 parser.add_argument('--trained_model', action='store_true')
@@ -70,3 +71,9 @@ for wav_file in wav_list:
     if not args.no_merge:
         chunks = merge_chunk(chunks)
     save_audio(chunks,  fname, fs_wav, audio)
+
+    dir_path = f'output/{fname}_split/SPEAKER_00'
+    print(verification.get_name_for_dir(dir_path))
+
+    dir_path = f'output/{fname}_split/SPEAKER_01'
+    print(verification.get_name_for_dir(dir_path))

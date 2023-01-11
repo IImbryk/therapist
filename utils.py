@@ -555,3 +555,25 @@ def save_audio(chanks, fname, fs_wav, audio):
         chunk_name = f'output/{fname}_split/{name}/{name}_{i}.wav'
 
         wavfile.write(chunk_name, fs_wav, chunk)
+
+
+def get_embedding(files_list, inference) -> dict:
+    """
+    get embedding for all audio from directory
+    """
+    embedding = {}
+    for ref_file in files_list:
+        file_name = Path(ref_file).stem
+        embedding[file_name] = inference(ref_file)[None]
+    return embedding
+
+
+def simular_speaker(emb_audio, ref_embedding, cdist):
+    name_for_max = None
+    max_d = 0
+    for ref_file, ref_emb in ref_embedding.items():
+        d = cdist(emb_audio, ref_emb, metric='cosine')[0, 0]
+        if d > max_d:
+            max_d = d
+            name_for_max = ref_file
+    return name_for_max, max_d
