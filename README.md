@@ -61,8 +61,8 @@ You can use the same token on different PC.
 
 
 ## Start
-To run this training type in terminal:
+To run inference type in terminal:
 
 ```
-$ python train.py
+$ python infer.py --trained_model --read_hyperparameters --no_merge --input_path <DATA_PATH>
 ```
