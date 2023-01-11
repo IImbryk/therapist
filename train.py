@@ -10,12 +10,16 @@ import time
 import torch
 from utils import test
 from pyannote.database import FileFinder
+import argparse
 
-
-max_epochs = 1  # Tune
+parser = argparse.ArgumentParser(description='training models')
+parser.add_argument('--max_epochs', default=2, type=int)
+parser.add_argument('--input_path', default='data_train/', type=str)
+args = parser.parse_args()
 
 path = os.path.dirname(os.path.abspath("__file__"))
-input_path = os.path.join(path, 'data_train')
+input_path = args.input_path
+# input_path = os.path.join(path, 'data_train')
 data_files = list(Path(input_path).glob('*.csv*'))
 
 rttm_file = 'train.rttm'
@@ -24,7 +28,6 @@ lst_file = 'train.lst'
 
 # data preparation
 create_train_list(rttm_file, uem_file, lst_file, data_files)
-
 
 protocol = get_protocol('MyDatabase.Protocol.MyProtocol', preprocessors={"audio": FileFinder()})
 for resource in protocol.train():
@@ -43,7 +46,7 @@ finetuned.task = seg_task
 der_pretrained = test(model=pretrained, protocol=protocol, subset="train")
 print(f"Local DER (pretrained) = {der_pretrained * 100:.1f}%")
 start_time = time.time()
-trainer = pl.Trainer(gpus=1, max_epochs=max_epochs)
+trainer = pl.Trainer(gpus=1, max_epochs=args.max_epochs)
 trainer.fit(finetuned)
 print("--- %s seconds ---" % (time.time() - start_time))
 

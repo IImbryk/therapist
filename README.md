@@ -61,8 +61,16 @@ You can use the same token on different PC.
 
 
 ## Start
-To run inference type in terminal:
+To get a result on new data type in terminal:
 
 ```
 $ python infer.py --trained_model --read_hyperparameters --no_merge --input_path <DATA_PATH>
 ```
+
+Meaning of the flags:
+* `--trained_model` -- to use the trained model, default model from the library
+* `--read_hyperparameters` -- to use optimized hyperparameters, without 
+* `--no_merge` -- turn off merging audio from same speaker talk continuously
+* `--input_path` -- path to data folder, default `\data`
+
+All flags are optional. Can be typing: `$ python infer.py` -- it will be with models from pyanote, with default hyperparams and result merges by speaker.

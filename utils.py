@@ -169,7 +169,7 @@ def eval_diarization(gt_rttm_path, res_rttm_path, file=False):
     # print('Detection Recall: ', metric['detection recall'])
 
     metric = DiarizationErrorRate()
-    der = metric(gt, res)
+    # der = metric(gt, res)
     # print(f'diarization error rate: {100 * der:.1f}%')
 
     if file:
@@ -184,7 +184,7 @@ def eval_diarization(gt_rttm_path, res_rttm_path, file=False):
         file.write(f'Diarization Error Rate: {100 * der:.1f}% \n')
 
     # print('____________________________')
-    return res, gt
+    return res, gt, der
 
 
 def save_fig(groundtruth, diarization, overlap, start, end, results_dir, fname, axis_name='overlap'):

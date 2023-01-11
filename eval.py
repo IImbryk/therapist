@@ -1,3 +1,5 @@
+import numpy as np
+
 from utils import *
 from tqdm import tqdm
 from pyannote.audio import Model
@@ -67,6 +69,7 @@ file_metrics = open(file_metrics_path, 'w')
 
 # inference
 print(f'{len(wav_list)} files to process')
+der_result = []
 for wav_file in wav_list:
     fname = wav_file.stem
 
@@ -74,53 +77,40 @@ for wav_file in wav_list:
     gt_path = f'{args.input_path}{fname}.rttm'
 
     diarization_path = f'output/{fname}_diarization.rttm'
-    overlap_path = f'output/{fname}_overlapped.rttm'
-    gt_overlap_path = f'{args.input_path}{fname}_gt_overlapped.rttm'
-    after_embedding_path = f'output/{fname}_after_embedding.rttm'
+    # overlap_path = f'output/{fname}_overlapped.rttm'
+    # gt_overlap_path = f'{args.input_path}{fname}_gt_overlapped.rttm'
+    # after_embedding_path = f'output/{fname}_after_embedding.rttm'
     figure_path = f'output/{fname}_plot_result'
 
     if not os.path.exists(gt_path):
         csv_to_rttm(csv_files, gt_path)
 
     # create gt overlap annotation
-    overlap_gt = get_overlap_reference(gt_path)
-    save_annotation(overlap_gt, gt_overlap_path)
+    # overlap_gt = get_overlap_reference(gt_path)
+    # save_annotation(overlap_gt, gt_overlap_path)
 
     # diarization
     diarization = pipeline(wav_file, num_speakers=2)
     save_annotation(diarization, diarization_path)
 
     # overlap
-    gt_overlap = get_overlap_reference(gt_path)
+    # gt_overlap = get_overlap_reference(gt_path)
 
     # overlap = get_overlapped_from_model(wav_file, ovl_model, params_ovl['offset'], params_ovl['onset'])
-    overlap = overlapp_model(wav_file)
+    # overlap = overlapp_model(wav_file)
 
-    # save result overlap in rttm file
-    save_annotation(overlap, overlap_path)
-    save_annotation(gt_overlap, gt_overlap_path)
+    # # save result overlap in rttm file
+    # save_annotation(overlap, overlap_path)
+    # save_annotation(gt_overlap, gt_overlap_path)
 
     gt = load_rttm(gt_path)
     key_name = list(gt.keys())[0]
     groundtruth = gt[key_name]
 
     # diarization evaluation
-    eval_diarization(gt_path, diarization_path, file_metrics)
+    _, _, der = eval_diarization(gt_path, diarization_path, file_metrics)
+    der_result.append(der)
 
-    # overlap evaluation
-    len_audio = get_duration(str(wav_file))
-    eval_overlapped(gt_overlap_path, overlap_path, len_audio, file_metrics)
 
-    # plot
-    plot_duration = 30
-    for start, stop in tqdm(chunks(get_duration(str(wav_file)), plot_duration)):
-        save_fig(groundtruth, diarization, overlap, start, stop, figure_path, fname)
-
-    # save audio
-    fs_wav, audio = wavfile.read(f'{args.input_path}{fname}.wav')
-    chunks = get_chunks(f'output/{fname}_diarization.rttm', fs_wav)
-    if not args.no_merge:
-        chunks = merge_chunk(chunks)
-    save_audio(chunks,  fname, fs_wav, audio)
-
+print(f'Diarization Error Rate: {100 * np.average(der_result):.1f}% \n')
 file_metrics.close()
