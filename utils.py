@@ -12,7 +12,7 @@ from scipy.io.wavfile import read as read_wav
 from pydub import AudioSegment
 import yaml
 import datetime
-
+import shutil
 
 def string_to_seconds(s):
     s = s.split(':')
@@ -547,6 +547,9 @@ def merge_chunk(chunks):
 
 
 def save_audio(chanks, fname, fs_wav, audio):
+    # os.makedirs(f'output/{fname}_split', exist_ok=True)
+    if os.path.exists(f'output/{fname}_split'):
+        shutil.rmtree(f'output/{fname}_split')
     for i, col in enumerate(chanks):
         start_time, finish_time, name = col[0], col[1], col[2]
         chunk = audio[int(start_time): int(finish_time)]

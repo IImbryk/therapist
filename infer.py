@@ -72,8 +72,19 @@ for wav_file in wav_list:
         chunks = merge_chunk(chunks)
     save_audio(chunks,  fname, fs_wav, audio)
 
-    dir_path = f'output/{fname}_split/SPEAKER_00'
-    print(verification.get_name_for_dir(dir_path))
+    dir_path0 = f'output/{fname}_split/SPEAKER_00'
+    name0, emb0 = verification.get_name_for_dir(dir_path0)
 
-    dir_path = f'output/{fname}_split/SPEAKER_01'
-    print(verification.get_name_for_dir(dir_path))
+    dir_path1 = f'output/{fname}_split/SPEAKER_01'
+    name1, emb1 = verification.get_name_for_dir(dir_path1)
+
+    print(name0, emb0)
+    print(name1, emb1)
+
+    # rename directory
+    if emb0 > emb1:
+        os.rename(dir_path0, f'output/{fname}_split/therapist')
+        os.rename(dir_path1, f'output/{fname}_split/patient')
+    else:
+        os.rename(dir_path1, f'output/{fname}_split/therapist')
+        os.rename(dir_path0, f'output/{fname}_split/patient')

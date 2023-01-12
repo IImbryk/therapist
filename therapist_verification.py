@@ -3,7 +3,7 @@ from scipy.spatial.distance import cdist
 from pyannote.audio import Model
 from pyannote.audio import Inference
 from utils import get_embedding, simular_speaker
-from statistics import mode
+from statistics import mode, mean
 
 
 class SpeakerVerification:
@@ -18,10 +18,12 @@ class SpeakerVerification:
         chunk_embedding = get_embedding(audio_list, self.inference)
 
         name = []
+        distance = []
         for emb in chunk_embedding.values():
             name_for_max, max_d = simular_speaker(emb, self.ref_embedding, cdist)
             name.append(name_for_max)
-        return mode(name)
+            distance.append(max_d)
+        return mode(name), mean(distance)
 
 
 if __name__ == "__main__":
