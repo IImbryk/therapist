@@ -22,8 +22,9 @@ scripts:
 directoires:
 * `hyperparameters` - hyperparameters (result of `tune_hyperparameters.py`, using in `infer.py`)
 * `models` -  trained model (result of `train.py`)
-* `data_train` - .wav and .csv for models training
-* `data_test` - .wav and .csv for models testing
+* `data_train` - put .wav and .csv for models training
+* `data_test` - put .wav and .csv for models testing
+* `reference_audio` - put .wav of the therapist's speech examples
 * `output` - results
 
 
@@ -62,7 +63,7 @@ You can use the same token on different PC.
 To get a result on a new data type in terminal:
 
 ```
-$ python infer.py --trained_model --read_hyperparameters --no_merge --input_path <DATA_PATH>
+$ python infer.py --trained_model --read_hyperparameters --no_merge --input_path <DATA_PATH> --path_reference_audio <REFERENCE_PATH>
 ```
 
 Meaning of the flags:
@@ -70,5 +71,6 @@ Meaning of the flags:
 * `--read_hyperparameters` -- use optimized hyperparameter 
 * `--no_merge` -- turn off merging audio from same speaker talk continuously
 * `--input_path` -- path to data folder, default `\data`
+* `--path_reference_audio` -- path to reference data folder of therapist's audios, default `\reference_audio`
 
 All flags are optional. For example `$ python infer.py` -- default models from pyanote with default hyperparams and result merges by speaker.

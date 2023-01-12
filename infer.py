@@ -8,16 +8,17 @@ from pyannote.audio.pipelines import SpeakerDiarization
 from utils import check_files_name, save_annotation, get_chunks, merge_chunk, save_audio
 from therapist_verification import SpeakerVerification
 
-verification = SpeakerVerification()
+
 parser = argparse.ArgumentParser(description='therapist diarizetion')
 
 parser.add_argument('--trained_model', action='store_true')
 parser.add_argument('--read_hyperparameters', action='store_true')
 parser.add_argument('--no_merge', action='store_true')
 parser.add_argument('--input_path', default='data/', type=str)
-
-
+parser.add_argument('--path_reference_audio', default='reference_audio/', type=str)
 args = parser.parse_args()
+
+verification = SpeakerVerification(reference_path=args.path_reference_audio)
 
 torch.set_grad_enabled(False)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -78,8 +79,6 @@ for wav_file in wav_list:
     dir_path1 = f'output/{fname}_split/SPEAKER_01'
     name1, emb1 = verification.get_name_for_dir(dir_path1)
 
-    print(name0, emb0)
-    print(name1, emb1)
 
     # rename directory
     if emb0 > emb1:

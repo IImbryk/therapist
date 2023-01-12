@@ -13,7 +13,7 @@ from pyannote.database import FileFinder
 import argparse
 
 parser = argparse.ArgumentParser(description='training models')
-parser.add_argument('--max_epochs', default=2, type=int)
+parser.add_argument('--max_epochs', default=10, type=int)
 parser.add_argument('--input_path', default='data_train/', type=str)
 args = parser.parse_args()
 

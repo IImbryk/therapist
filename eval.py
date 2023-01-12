@@ -1,14 +1,12 @@
 import numpy as np
 
 from utils import *
-from tqdm import tqdm
 from pyannote.audio import Model
 from pyannote.audio.pipelines import OverlappedSpeechDetection
 import os
 import torch
 import argparse
 from pathlib import Path
-from scipy.io import wavfile
 from pyannote.audio import Pipeline
 from pyannote.audio.pipelines import SpeakerDiarization
 from utils import check_files_name, save_annotation, get_chunks, merge_chunk, save_audio
@@ -20,6 +18,7 @@ parser.add_argument('--trained_model', action='store_true')
 parser.add_argument('--read_hyperparameters', action='store_true')
 parser.add_argument('--no_merge', action='store_true')
 parser.add_argument('--input_path', default='data_test/', type=str)
+
 
 
 args = parser.parse_args()

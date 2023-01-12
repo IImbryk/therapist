@@ -4,6 +4,7 @@ from pyannote.audio import Model
 from pyannote.audio import Inference
 from utils import get_embedding, simular_speaker
 from statistics import mode, mean
+import random
 
 
 class SpeakerVerification:
@@ -14,7 +15,7 @@ class SpeakerVerification:
         self.ref_embedding = get_embedding(ref_list, self.inference)
 
     def get_name_for_dir(self, dir_path):
-        audio_list = list(Path(dir_path).glob('*.wav'))[0:3]
+        audio_list = random.choices(list(Path(dir_path).glob('*.wav')), k=3)
         chunk_embedding = get_embedding(audio_list, self.inference)
 
         name = []
