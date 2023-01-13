@@ -13,7 +13,7 @@ from pyannote.database import FileFinder
 import argparse
 
 parser = argparse.ArgumentParser(description='training models')
-parser.add_argument('--max_epochs', default=2, type=int)
+parser.add_argument('--max_epochs', default=15, type=int)
 parser.add_argument('--input_path', default='data_train/', type=str)
 args = parser.parse_args()
 
@@ -41,9 +41,11 @@ seg_task = Segmentation(protocol, duration=1, max_num_speakers=2)
 
 finetuned = deepcopy(pretrained)
 finetuned.task = seg_task
-finetuned.freeze_up_to('linear')
-# finetuned.freeze_up_to('linear.1')
+print(finetuned)
 # finetuned.freeze_up_to('linear.0')
+# finetuned.freeze_up_to('classifier')
+finetuned.freeze_up_to('linear.1')
+# finetuned.freeze_up_to('linear')
 #
 
 der_pretrained = test(model=pretrained, protocol=protocol, subset="train")
