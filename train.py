@@ -3,7 +3,7 @@ import os
 from utils import create_train_list
 from pyannote.audio import Model
 from pyannote.database import get_protocol
-from pyannote.audio.tasks import Segmentation, OverlappedSpeechDetection
+from pyannote.audio.tasks import Segmentation
 from copy import deepcopy
 import pytorch_lightning as pl
 import time
@@ -13,7 +13,7 @@ from pyannote.database import FileFinder
 import argparse
 
 parser = argparse.ArgumentParser(description='training models')
-parser.add_argument('--max_epochs', default=10, type=int)
+parser.add_argument('--max_epochs', default=2, type=int)
 parser.add_argument('--input_path', default='data_train/', type=str)
 args = parser.parse_args()
 
@@ -27,7 +27,7 @@ uem_file = 'train.uem'
 lst_file = 'train.lst'
 
 # data preparation
-create_train_list(rttm_file, uem_file, lst_file, data_files)
+create_train_list(rttm_file, uem_file, lst_file, data_files, duration=120)
 
 protocol = get_protocol('MyDatabase.Protocol.MyProtocol', preprocessors={"audio": FileFinder()})
 for resource in protocol.train():
@@ -41,6 +41,9 @@ seg_task = Segmentation(protocol, duration=1, max_num_speakers=2)
 
 finetuned = deepcopy(pretrained)
 finetuned.task = seg_task
+finetuned.freeze_up_to('linear')
+# finetuned.freeze_up_to('linear.1')
+# finetuned.freeze_up_to('linear.0')
 #
 
 der_pretrained = test(model=pretrained, protocol=protocol, subset="train")

@@ -187,11 +187,11 @@ def eval_diarization(gt_rttm_path, res_rttm_path, file=False):
     return res, gt, der
 
 
-def save_fig(groundtruth, diarization, overlap, start, end, results_dir, fname, axis_name='overlap'):
+def save_fig(groundtruth, diarization, start, end, results_dir):
     # print(start, end)
     notebook.crop = Segment(start, end)
 
-    nrows = 3
+    nrows = 2
 
     fig, ax = plt.subplots(nrows=nrows, ncols=1)
     fig.set_figwidth(20)
@@ -200,12 +200,9 @@ def save_fig(groundtruth, diarization, overlap, start, end, results_dir, fname, 
     notebook.plot_annotation(diarization, ax=ax[0], time=True, legend=True)
     ax[0].text(notebook.crop.start + 0.5, 0.1, 'diarization', fontsize=14)
 
-    notebook.plot_annotation(overlap, ax=ax[1], time=True, legend=False)
-    ax[1].text(notebook.crop.start + 0.5, 0.1, axis_name, fontsize=14)
-
     if groundtruth:
-        notebook.plot_annotation(groundtruth, ax=ax[2], time=True, legend=False)
-        ax[2].text(notebook.crop.start + 0.5, 0.1, 'ground truth', fontsize=14)
+        notebook.plot_annotation(groundtruth, ax=ax[1], time=True, legend=False)
+        ax[1].text(notebook.crop.start + 0.5, 0.1, 'ground truth', fontsize=14)
 
     fname = Path(results_dir) / f'{start}_{end}.jpg'
     if not os.path.exists(results_dir):
@@ -274,7 +271,7 @@ def csv_to_rttm(data_file, out_file):
             fout.write(line)
 
 
-def create_train_list(rttm_file, uem_file, lst_file, data_files):
+def create_train_list(rttm_file, uem_file, lst_file, data_files, duration=None):
     with open(rttm_file, 'w') as fout_rttm, open(uem_file, 'w') as fout_uem, open(lst_file, 'w') as fout_lst:
 
         priv_time = datetime.datetime.strptime("00:00:00:00", "%H:%M:%S:%f")
@@ -286,7 +283,11 @@ def create_train_list(rttm_file, uem_file, lst_file, data_files):
             print(data_file)
             wav_file = Path(data_file).with_suffix('.wav')
             audio = AudioSegment.from_file(wav_file)
-            fout_uem.write(f'{filename} NA 0.0 {round(audio.duration_seconds, 1)}' + '\n')
+            if duration:
+                fout_uem.write(f'{filename} NA 0.0 {duration}' + '\n')
+            else:
+                fout_uem.write(f'{filename} NA 0.0 {round(audio.duration_seconds, 1)}' + '\n')
+
 
             periods = []
             speaker1_in_process = False

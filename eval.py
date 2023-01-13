@@ -110,6 +110,8 @@ for wav_file in wav_list:
     _, _, der = eval_diarization(gt_path, diarization_path, file_metrics)
     der_result.append(der)
 
+    save_fig(groundtruth, diarization, 0, 200, f'output/{fname}_plot')
+
 
 print(f'Diarization Error Rate: {100 * np.average(der_result):.1f}% \n')
 file_metrics.close()
