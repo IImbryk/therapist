@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from utils import create_train_list
+from utils import create_train_list, change_train_data_path
 from pyannote.audio import Model
 from pyannote.database import get_protocol
 from pyannote.audio.tasks import Segmentation
@@ -19,7 +19,9 @@ args = parser.parse_args()
 
 path = os.path.dirname(os.path.abspath("__file__"))
 input_path = args.input_path
+change_train_data_path(input_path)
 # input_path = os.path.join(path, 'data_train')
+
 data_files = list(Path(input_path).glob('*.csv*'))
 
 rttm_file = 'train.rttm'

@@ -395,6 +395,15 @@ def change_sampling_rate(path_file, path_file_out):
     print("Sampling after changing", sampling_rate)
 
 
+def change_train_data_path(path_input):
+    with open("database.yml") as f:
+        list_doc = yaml.safe_load(f)
+    list_doc['Databases']['MyDatabase'] = path_input + '/{uri}.wav'
+
+    with open("database.yml", "w") as f:
+        yaml.dump(list_doc, f)
+
+
 def read_yml(file_path):
     with open(file_path, mode='r') as fp:
         params_main = yaml.load(fp, Loader=yaml.SafeLoader)
